@@ -47,7 +47,7 @@ async def verify(ctx, uwo_id):
         print(f"Failed to verify {uwo_id} because the identity was already taken.")
         return
 
-    name = "".join(members.loc[row, ["first name", "last name"]])
+    name = " ".join(members.loc[row, ["first name", "last name"]])
     team = members.loc[row, "team"]
     await ctx.send(f"Welcome {name} to the {team}!")
 
