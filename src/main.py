@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from keys import bot_token
+from SECRETS import bot_token, channel_id
 import pandas as pd
 import numpy as np
 
@@ -21,8 +21,13 @@ async def on_ready():
 
 @client.command()
 async def verify(ctx, uwo_id):
-    print(f"Attempting to verify {uwo_id}...")
     await ctx.message.delete()
+    print(ctx.channel.id, channel_id, ctx.channel.id != channel_id)
+    if ctx.channel.id != channel_id:
+        await ctx.send(f"This command can only be used in <#{channel_id}>.", delete_after=5)
+        return
+
+    print(f"Attempting to verify {uwo_id}...")
     members = pd.read_csv(members_file)
 
     uwo_id = uwo_id.strip().lower()
