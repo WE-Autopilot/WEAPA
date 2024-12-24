@@ -30,6 +30,11 @@ async def verify(ctx, uwo_id):
     print(f"Attempting to verify {uwo_id}...")
     members = pd.read_csv(members_file)
 
+    if (members["discord"] == ctx.author.name).any():
+        await ctx.send("You're already verified under another ID. Please contact a moderator if you believe this to be a mistake.")
+        print(f"Failed to verify {uwo_id} because the identity is not in the file.")
+        return
+
     uwo_id = uwo_id.strip().lower()
     if (members["id"] != uwo_id).all():
         await ctx.send("That doesn't seem to be an UWO ID.")
