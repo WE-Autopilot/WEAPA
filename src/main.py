@@ -31,19 +31,19 @@ async def verify(ctx, uwo_id):
     members = pd.read_csv(members_file)
 
     if (members["discord"] == ctx.author.name).any():
-        await ctx.send("You're already verified under another ID. Please contact a moderator if you believe this to be a mistake.")
+        await ctx.send("You're already verified under another ID. Please contact a moderator if you believe this to be a mistake.", delete_after=5)
         print(f"Failed to verify {uwo_id} because the identity is not in the file.")
         return
 
     uwo_id = uwo_id.strip().lower()
     if (members["id"] != uwo_id).all():
-        await ctx.send("That doesn't seem to be an UWO ID.")
+        await ctx.send("That doesn't seem to be an UWO ID.", delete_after=5)
         print(f"Failed to verify {uwo_id} because the identity is not in the file.")
         return
 
     row = np.where(members["id"] == uwo_id)[0][0]
     if members.loc[row, "discord"] == members.loc[row, "discord"]:
-        await ctx.send("That UWO ID is already verified. Please contact a moderator if you believe this to be a mistake.")
+        await ctx.send("That UWO ID is already verified. Please contact a moderator if you believe this to be a mistake.", delete_after=5)
         print(f"Failed to verify {uwo_id} because the identity was already taken.")
         return
 
