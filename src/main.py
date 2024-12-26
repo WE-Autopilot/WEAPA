@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from SECRETS import bot_token, channel_id
+from SECRETS import bot_token, verification_channels, file_channels
 import pandas as pd
 import numpy as np
 
@@ -12,6 +12,7 @@ intents.members = True
 intents.guilds = True
 client = commands.Bot(command_prefix="/", intents=intents)
 members_file = "members.csv"
+EXEC_ROLE = "WEAP Exec"
 
 
 @client.event
@@ -22,9 +23,8 @@ async def on_ready():
 @client.command()
 async def verify(ctx, uwo_id):
     await ctx.message.delete()
-    print(ctx.channel.id, channel_id, ctx.channel.id != channel_id)
-    if ctx.channel.id != channel_id:
-        await ctx.send(f"This command can only be used in <#{channel_id}>.", delete_after=5)
+    if not ctx.channel.id in verification_channels:
+        await ctx.send(f"This command can only be used in <#{verification_channels[0]}>.", delete_after=5)
         return
 
     print(f"Attempting to verify {uwo_id}...")
@@ -57,6 +57,21 @@ async def verify(ctx, uwo_id):
     members.loc[row, "discord"] = ctx.author.name
     members.to_csv(members_file, index=False)
     print(f"Verified {uwo_id} successfully!")
+
+
+@client.command()
+async def getmembers(ctx):
+    if not ctx.channel.id in file_channels:
+        await ctx.send(f"This command can only be used in <#{file_channels[0]}>.", delete_after=5)
+        return
+    
+    exec_role = discord.utils.get(ctx.guild.roles, name=EXEC_ROLE)
+    if not exec_role in ctx.author.roles:
+        await ctx.send(f"You need to be an {EXEC_ROLE} to use this command.", delete_after=5)
+        return
+
+    await ctx.send(file=discord.File(members_file))
+    print("Sent the members.csv file.")
 
 
 client.run(bot_token)
